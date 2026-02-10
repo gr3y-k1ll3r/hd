@@ -103,20 +103,13 @@
         @keyframes fall {
             to { transform: translateY(110vh) rotate(360deg); }
         }
-
-        #sc-player {
-            position: absolute;
-            top: -9999px;
-            visibility: hidden;
-        }
     </style>
 </head>
 <body>
 
-    <iframe id="sc-player" 
-            src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/246479007&auto_play=false" 
-            allow="autoplay">
-    </iframe>
+    <audio id="love-audio" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="intro-screen" onclick="startApp()">
         <div class="pulsing-heart">❤</div>
@@ -147,15 +140,16 @@
         <div id="timer" class="timer-display"></div>
     </div>
 
-    <script src="https://w.soundcloud.com/player/api.js"></script>
     <script>
         // Установка даты: 25.06.2017 22:00
         const startDate = new Date(2017, 5, 25, 22, 0, 0);
-        const widget = SC.Widget(document.getElementById('sc-player'));
+        const audio = document.getElementById('love-audio');
 
         function startApp() {
-            // Запуск музыки
-            widget.play();
+            // Запуск музыки при клике на сердечко
+            audio.play().catch(error => {
+                console.log("Autoplay blocked or file not found:", error);
+            });
 
             const intro = document.getElementById('intro-screen');
             const main = document.getElementById('main-content');
