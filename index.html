@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pentru dragostea mea</title>
+    <title>Pentru dragostea mea ❤️</title>
+
+    <meta property="og:title" content="Pentru dragostea mea ❤️">
+    <meta property="og:description" content="O mică surpriză pentru tine. Te iubesc!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gr3y-k1ll3r.github.io/hd/">
     <style>
         :root {
             --bg-color: #fdf5e6;
@@ -107,7 +112,7 @@
 </head>
 <body>
 
-    <audio id="love-audio" loop>
+    <audio id="love-audio" loop preload="auto">
         <source src="music.mp3" type="audio/mpeg">
     </audio>
 
@@ -141,15 +146,18 @@
     </div>
 
     <script>
-        // Установка даты: 25.06.2017 22:00
         const startDate = new Date(2017, 5, 25, 22, 0, 0);
         const audio = document.getElementById('love-audio');
 
+        audio.load();
+
         function startApp() {
-            // Запуск музыки при клике на сердечко
-            audio.play().catch(error => {
-                console.log("Autoplay blocked or file not found:", error);
-            });
+            // Запуск аудио
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => { console.log("Music started"); })
+                .catch(e => { setTimeout(() => { audio.play(); }, 150); });
+            }
 
             const intro = document.getElementById('intro-screen');
             const main = document.getElementById('main-content');
@@ -159,7 +167,6 @@
                 intro.style.display = 'none';
                 main.style.visibility = 'visible';
                 main.style.opacity = '1';
-                // Запуск анимации сердечек
                 setInterval(createFallingHeart, 300);
             }, 1500);
         }
@@ -172,8 +179,10 @@
             const minutes = Math.floor((diff / (1000 * 60)) % 60);
             const seconds = Math.floor((diff / 1000) % 60);
 
-            document.getElementById('timer').innerHTML = 
-                `${days} zile, ${hours} ore, ${minutes} min, ${seconds} sec`;
+            const display = document.getElementById('timer');
+            if(display) {
+                display.innerHTML = `${days} zile, ${hours} ore, ${minutes} min, ${seconds} sec`;
+            }
         }
 
         function createFallingHeart() {
