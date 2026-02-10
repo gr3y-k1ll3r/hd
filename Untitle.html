@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pentru dragostea mea</title>
+    <style>
+        :root {
+            --bg-color: #fdf5e6;
+            --text-color: #5d4037;
+            --heart-red: #ff4d6d;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg-color);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #intro-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 1.5s ease;
+            cursor: pointer;
+        }
+
+        .pulsing-heart {
+            font-size: 100px;
+            color: var(--heart-red);
+            animation: pulse 1.5s infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 77, 109, 0.5));
+        }
+
+        .tap-text {
+            margin-top: 25px;
+            font-size: 1rem;
+            color: var(--text-color);
+            opacity: 0.6;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        #main-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 3s ease;
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            z-index: 10;
+        }
+
+        .message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .tree-svg {
+            width: 220px;
+            margin: 5px auto;
+            display: block;
+        }
+
+        .timer-label { font-size: 0.85rem; margin-top: 15px; color: #8d6e63; font-style: italic; }
+        .timer-display {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 8px;
+            border-top: 1px solid #d7ccc8;
+            padding-top: 12px;
+            color: var(--text-color);
+        }
+
+        .falling-heart {
+            position: absolute;
+            top: -30px;
+            color: var(--heart-red);
+            pointer-events: none;
+            animation: fall linear forwards;
+            z-index: 5;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        #sc-player {
+            position: absolute;
+            top: -9999px;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <iframe id="sc-player" 
+            src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/246479007&auto_play=false" 
+            allow="autoplay">
+    </iframe>
+
+    <div id="intro-screen" onclick="startApp()">
+        <div class="pulsing-heart">❤</div>
+        <div class="tap-text">Apasă inima</div>
+    </div>
+
+    <div id="main-content">
+        <div class="message">
+            <h2>Pentru dragostea vieții mele:</h2>
+            <p>Dacă aș putea alege un loc sigur,<br>acela ar fi lângă tine.</p>
+            <p>Cu cât petrec mai mult timp cu tine,<br>cu atât te iubesc mai mult.</p>
+            <br>
+            <strong>— Te iubesc!</strong>
+        </div>
+
+        <svg class="tree-svg" viewBox="0 0 200 200">
+            <rect x="96" y="150" width="8" height="30" fill="#5d4037" />
+            <path d="M100 150 Q165 150 175 90 T100 25 T25 90 T100 150" fill="#ff4d6d" opacity="0.8"/>
+            <path d="M100 140 Q145 140 155 100 T100 55 T45 100 T100 140" fill="#ff85a1" opacity="0.6"/>
+            <text x="85" y="85" fill="white" font-size="14">❤</text>
+            <text x="110" y="70" fill="white" font-size="10">❤</text>
+            <text x="105" y="105" fill="white" font-size="12">❤</text>
+            <text x="75" y="115" fill="white" font-size="9">❤</text>
+            <text x="125" y="95" fill="white" font-size="11">❤</text>
+        </svg>
+
+        <div class="timer-label">Iubirea mea pentru tine a început acum...</div>
+        <div id="timer" class="timer-display"></div>
+    </div>
+
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+    <script>
+        // Установка даты: 25.06.2017 22:00
+        const startDate = new Date(2017, 5, 25, 22, 0, 0);
+        const widget = SC.Widget(document.getElementById('sc-player'));
+
+        function startApp() {
+            // Запуск музыки
+            widget.play();
+
+            const intro = document.getElementById('intro-screen');
+            const main = document.getElementById('main-content');
+            
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.style.display = 'none';
+                main.style.visibility = 'visible';
+                main.style.opacity = '1';
+                // Запуск анимации сердечек
+                setInterval(createFallingHeart, 300);
+            }, 1500);
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('timer').innerHTML = 
+                `${days} zile, ${hours} ore, ${minutes} min, ${seconds} sec`;
+        }
+
+        function createFallingHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('falling-heart');
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 18 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            heart.style.opacity = Math.random() * 0.6 + 0.4;
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+</body>
+</html>
